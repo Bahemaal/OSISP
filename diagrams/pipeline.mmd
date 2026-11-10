@@ -1,0 +1,12 @@
+flowchart LR
+  G[Generator: main] --> Q0[Q0: FIFO + CS + 2 Semaphore]
+  Q0 --> S1[Stage 1: N workers]
+  S1 --> Q1[Q1: FIFO + CS + 2 Semaphore]
+  Q1 --> S2[Stage 2: N workers]
+  S2 --> Q2[Q2: FIFO + CS + 2 Semaphore]
+  Q2 --> S3[Stage 3: N workers]
+  S3 --> Q3[Q3: FIFO + CS + 2 Semaphore]
+  Q3 --> C[Collector]
+  S1 -.-> ST[Statistics: one CS or three CS]
+  S2 -.-> ST
+  S3 -.-> ST
