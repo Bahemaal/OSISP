@@ -46,9 +46,9 @@ struct Config {
 struct StageStats {uint64_t count=0,checksum=0;};
 struct Local {
     int id=0,stage=0; uint64_t completed=0;
-    double statsWait=0,statsHold=0,queueWait=0,busy=0,maxStatsWait=0;
+    double statsWait=0,statsHold=0,queueWait=0,busy=0,maxStatsWait=0,processing=0;
 };
-struct Job {int id=-1;uint64_t value=0;};
+struct Job {int id=-1;uint64_t value=0;int64_t born=0,queued=0;double waitMs=0;};
 struct Context;
 struct Queue {
     CS lock; Handle items,spaces; std::deque<Job> jobs; size_t capacity,peak=0;
@@ -88,7 +88,8 @@ struct Context {
     }
     DWORD remaining(){
         double left=cfg.maxMs-ms(counter()-begin);
-        return left>0 ? static_cast<DWORD>(std::max(1.0,left)) : 0;
+        if(left<=0){++timeouts;throw std::runtime_error("EXPERIMENT_TIMEOUT");}
+        return static_cast<DWORD>(std::max(1.0,left));
     }
     void wait(HANDLE h){
         HANDLE hs[]={cancel.h,h};DWORD w=WaitForMultipleObjects(2,hs,FALSE,remaining());
@@ -101,14 +102,15 @@ struct Context {
 };
 void release(HANDLE h){if(!ReleaseSemaphore(h,1,nullptr))apiError("ReleaseSemaphore");}
 void Queue::push(Context& c,Job job,double& wait){
-    auto t=counter();c.wait(spaces.h);wait+=c.ms(counter()-t);
-    {Guard guard(lock);c.invariant(jobs.size()<capacity,"queue overflow");jobs.push_back(job);peak=std::max(peak,jobs.size());}
+    auto t=counter();if(!job.born)job.born=t;
+    c.wait(spaces.h);double blocked=c.ms(counter()-t);wait+=blocked;job.waitMs+=blocked;
+    {Guard guard(lock);c.invariant(jobs.size()<capacity,"queue overflow");job.queued=counter();jobs.push_back(job);peak=std::max(peak,jobs.size());}
     release(items.h);
 }
 Job Queue::pop(Context& c,double& wait){
     auto t=counter();c.wait(items.h);wait+=c.ms(counter()-t);
     Job job;
-    {Guard guard(lock);c.invariant(!jobs.empty(),"queue underflow");job=jobs.front();jobs.pop_front();}
+    {Guard guard(lock);c.invariant(!jobs.empty(),"queue underflow");job=jobs.front();jobs.pop_front();job.waitMs+=c.ms(counter()-job.queued);}
     release(spaces.h);return job;
 }
 uint64_t process(uint64_t value,int stage,int iterations){
@@ -130,7 +132,8 @@ DWORD WINAPI workerMain(void* p){
             LONG expected=2*l.stage;
             c.invariant(InterlockedCompareExchange(&c.states[job.id],expected+1,expected)==expected,"duplicate/out-of-order stage start");
             if(c.cfg.inject==job.id && l.stage==1)throw std::runtime_error("INJECTED_WORKER_FAILURE");
-            job.value=process(job.value,l.stage,c.cfg.work);
+            auto computeStart=counter();job.value=process(job.value,l.stage,c.cfg.work);
+            l.processing+=c.ms(counter()-computeStart);
             CS& lock=c.cfg.separate?c.stageLocks[l.stage]:c.globalStats;
             c.log(l.id,"WAITING_STATS RESOURCE="+std::to_string(c.cfg.separate?l.stage:0),job.id);
             auto before=counter();
@@ -152,7 +155,7 @@ DWORD WINAPI workerMain(void* p){
         c.log(l.id,"FINISHED");return 0;
     }catch(const std::exception& e){c.log(l.id,std::string("ERROR ")+e.what(),-1,true);c.fail(e.what());return 1;}
 }
-struct Collector {Context* c;uint64_t completed=0;double queueWait=0;};
+struct Collector {Context* c;uint64_t completed=0;double queueWait=0,latency=0,requestWait=0;};
 DWORD WINAPI collectorMain(void* p){
     auto& x=*static_cast<Collector*>(p);auto& c=*x.c;int id=3*c.cfg.workers+1;
     try{
@@ -161,7 +164,8 @@ DWORD WINAPI collectorMain(void* p){
             Job job=c.queues[3]->pop(c,x.queueWait);if(job.id<0)break;
             c.invariant(job.id<c.cfg.operations,"collector id out of range");
             c.invariant(InterlockedCompareExchange(&c.states[job.id],7,6)==6,"duplicate/incomplete result");
-            c.results[job.id]=job.value;++x.completed;c.log(id,"COLLECTED",job.id);
+            c.results[job.id]=job.value;++x.completed;
+            x.latency+=c.ms(counter()-job.born);x.requestWait+=job.waitMs;c.log(id,"COLLECTED",job.id);
         }
         c.log(id,"FINISHED");return 0;
     }catch(const std::exception& e){c.log(id,std::string("ERROR ")+e.what(),-1,true);c.fail(e.what());return 1;}
@@ -234,10 +238,11 @@ int main(int argc,char** argv){
                 checksums[s]+=audit;}
             c.invariant(value==c.results[i],"sequential reference mismatch");
         }
-        double wait=0,hold=0,busy=0,queueWait=0,maxWait=0;
-        for(const auto& w:workers){const auto& l=w.local;wait+=l.statsWait;hold+=l.statsHold;busy+=l.busy;queueWait+=l.queueWait;maxWait=std::max(maxWait,l.maxStatsWait);
+        double wait=0,hold=0,busy=0,queueWait=0,maxWait=0,processing=0;
+        for(const auto& w:workers){const auto& l=w.local;wait+=l.statsWait;hold+=l.statsHold;busy+=l.busy;queueWait+=l.queueWait;maxWait=std::max(maxWait,l.maxStatsWait);processing+=l.processing;
             std::cout<<"WORKER id="<<l.id<<" stage="<<l.stage+1<<" completed="<<l.completed
-              <<" stats_wait_ms="<<l.statsWait<<" queue_wait_ms="<<l.queueWait<<" busy_ms="<<l.busy<<std::endl;}
+              <<" stats_wait_ms="<<l.statsWait<<" queue_wait_ms="<<l.queueWait<<" busy_ms="<<l.busy
+              <<" processing_ms="<<l.processing<<std::endl;}
         for(int s=0;s<3;++s){
             c.invariant(c.stats[s].count==static_cast<unsigned>(cfg.operations),"statistics count mismatch");
             c.invariant(c.stats[s].checksum==checksums[s],"statistics checksum mismatch");
@@ -249,6 +254,8 @@ int main(int argc,char** argv){
           <<" elapsed_ms="<<elapsed<<" throughput="<<1000.0*cfg.operations/elapsed
           <<" stats_wait_ms="<<wait<<" mean_stats_wait_us="<<wait*1000/(3*cfg.operations)
           <<" max_stats_wait_ms="<<maxWait<<" stats_hold_ms="<<hold<<" queue_wait_ms="<<queueWait
+          <<" mean_request_ms="<<collector.latency/cfg.operations<<" mean_request_wait_ms="<<collector.requestWait/cfg.operations
+          <<" processing_ms="<<processing
           <<" utilization="<<busy/(3*cfg.workers*elapsed)<<" violations="<<c.violations<<" timeouts="<<c.timeouts
           <<" errors="<<c.errors<<" peak0="<<c.queues[0]->peak<<" peak1="<<c.queues[1]->peak
           <<" peak2="<<c.queues[2]->peak<<" peak3="<<c.queues[3]->peak<<std::endl;

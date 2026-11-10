@@ -1,0 +1,8 @@
+[0.0276 ms] PARTICIPANT=0 PID=22476 TID=16268 START GENERATOR VARIANT=22 STUDENT_ID=109 SEED=11573
+WORKER id=1 stage=1 completed=492 stats_wait_ms=0.0645 queue_wait_ms=17.549 busy_ms=17.8022 processing_ms=15.6858
+WORKER id=2 stage=1 completed=553 stats_wait_ms=1.8055 queue_wait_ms=12.9516 busy_ms=22.2765 processing_ms=18.2227
+WORKER id=3 stage=2 completed=540 stats_wait_ms=2.2052 queue_wait_ms=12.8185 busy_ms=22.8574 processing_ms=17.9829
+WORKER id=4 stage=2 completed=505 stats_wait_ms=0.5709 queue_wait_ms=14.45 busy_ms=19.9403 processing_ms=17.0437
+WORKER id=5 stage=3 completed=566 stats_wait_ms=0.0754 queue_wait_ms=14.4018 busy_ms=20.4109 processing_ms=18.1414
+WORKER id=6 stage=3 completed=479 stats_wait_ms=0.0331 queue_wait_ms=12.4139 busy_ms=18.9379 processing_ms=17.0511
+SUMMARY mode=stage workers=2 operations=1045 completed=1045 rejected=0 seed=11573 capacity=32 work=20000 stats_work=2000 elapsed_ms=38.4975 throughput=27144.6 stats_wait_ms=4.7546 mean_stats_wait_us=1.51662 max_stats_wait_ms=1.1904 stats_hold_ms=10.8026 queue_wait_ms=84.5848 mean_request_ms=2.49773 mean_request_wait_ms=2.37683 processing_ms=104.128 utilization=0.529148 violations=0 timeouts=0 errors=0 peak0=32 peak1=32 peak2=32 peak3=32

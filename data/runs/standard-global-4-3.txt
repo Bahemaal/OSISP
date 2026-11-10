@@ -1,0 +1,14 @@
+[0.0358 ms] PARTICIPANT=0 PID=16204 TID=6972 START GENERATOR VARIANT=22 STUDENT_ID=109 SEED=1000
+WORKER id=1 stage=1 completed=115 stats_wait_ms=0.7892 queue_wait_ms=16.9904 busy_ms=4.94 processing_ms=3.6414
+WORKER id=2 stage=1 completed=136 stats_wait_ms=1.3365 queue_wait_ms=15.3663 busy_ms=6.2644 processing_ms=4.3713
+WORKER id=3 stage=1 completed=120 stats_wait_ms=0.0319 queue_wait_ms=16.9967 busy_ms=4.5621 processing_ms=4.0334
+WORKER id=4 stage=1 completed=129 stats_wait_ms=0.0339 queue_wait_ms=16.1031 busy_ms=4.914 processing_ms=4.3225
+WORKER id=5 stage=2 completed=137 stats_wait_ms=0.0305 queue_wait_ms=17.3475 busy_ms=4.9333 processing_ms=4.351
+WORKER id=6 stage=2 completed=142 stats_wait_ms=0.0266 queue_wait_ms=16.3502 busy_ms=5.2013 processing_ms=4.5658
+WORKER id=7 stage=2 completed=92 stats_wait_ms=0.0349 queue_wait_ms=14.4525 busy_ms=3.4776 processing_ms=3.071
+WORKER id=8 stage=2 completed=129 stats_wait_ms=1.0963 queue_wait_ms=12.0209 busy_ms=5.6714 processing_ms=4.0464
+WORKER id=9 stage=3 completed=183 stats_wait_ms=1.3771 queue_wait_ms=4.4745 busy_ms=8.0381 processing_ms=5.9417
+WORKER id=10 stage=3 completed=310 stats_wait_ms=0.0859 queue_wait_ms=6.1561 busy_ms=11.1872 processing_ms=9.8489
+WORKER id=11 stage=3 completed=0 stats_wait_ms=0 queue_wait_ms=0.6835 busy_ms=0 processing_ms=0
+WORKER id=12 stage=3 completed=7 stats_wait_ms=0.0004 queue_wait_ms=0.9821 busy_ms=0.2505 processing_ms=0.2211
+SUMMARY mode=global workers=4 operations=500 completed=500 rejected=0 seed=1000 capacity=32 work=20000 stats_work=2000 elapsed_ms=25.1511 throughput=19879.8 stats_wait_ms=4.8432 mean_stats_wait_us=3.2288 max_stats_wait_ms=1.3348 stats_hold_ms=4.892 queue_wait_ms=137.924 mean_request_ms=3.88267 mean_request_wait_ms=3.7593 processing_ms=48.4145 utilization=0.196943 violations=0 timeouts=0 errors=0 peak0=32 peak1=32 peak2=32 peak3=32
