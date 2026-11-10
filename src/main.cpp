@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+[[noreturn]] void apiError(const char* api);
 struct Handle {
     HANDLE h=nullptr;
     explicit Handle(HANDLE p=nullptr):h(p){}
@@ -21,7 +22,7 @@ struct Handle {
 };
 struct CS {
     CRITICAL_SECTION cs;
-    CS(){if(!InitializeCriticalSectionEx(&cs,0,0)) throw std::runtime_error("InitializeCriticalSectionEx failed");}
+    CS(){if(!InitializeCriticalSectionEx(&cs,0,0)) apiError("InitializeCriticalSectionEx");}
     ~CS(){DeleteCriticalSection(&cs);}
     CS(const CS&)=delete;
 };

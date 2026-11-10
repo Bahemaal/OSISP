@@ -7,6 +7,7 @@ add_executable(LR4_Variant22 src/main.cpp)
 target_compile_features(LR4_Variant22 PRIVATE cxx_std_17)
 target_compile_definitions(LR4_Variant22 PRIVATE _WIN32_WINNT=0x0602)
 if(MINGW)
+    target_compile_options(LR4_Variant22 PRIVATE $<$<CONFIG:Release>:-O2>)
     target_link_options(LR4_Variant22 PRIVATE -static-libgcc -static-libstdc++)
     get_filename_component(MINGW_BIN "${CMAKE_CXX_COMPILER}" DIRECTORY)
     add_custom_command(TARGET LR4_Variant22 POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different

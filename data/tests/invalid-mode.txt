@@ -1,1 +1,1 @@
-ERROR invalid mode
+﻿ERROR invalid mode

@@ -16,8 +16,12 @@ $cases=@(
 $rows=@()
 foreach($case in $cases){
     $argsForExe=$case.Args
+    # Windows PowerShell 5 treats redirected native stderr as ErrorRecord.
+    $savedPreference=$ErrorActionPreference
+    $ErrorActionPreference='Continue'
     $output=& $Executable @argsForExe 2>&1
     $code=$LASTEXITCODE
+    $ErrorActionPreference=$savedPreference
     $output | Set-Content (Join-Path $dir ($case.Name+'.txt')) -Encoding UTF8
     if($code -ne $case.Exit -or ($output -join "`n") -notmatch $case.Pattern){throw "FAILED: $($case.Name), exit=$code"}
     $rows += [pscustomobject]@{Test=$case.Name;ExitCode=$code;Result='PASS'}

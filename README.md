@@ -23,5 +23,63 @@ Generator (main) → Q0 → Stage1 → Q1 → Stage2 → Q2 → Stage3 → Q3 �
 3. Проверки инвариантов, ошибок, ограниченного времени и экспериментов.
 4. Данные, графики, анализ и PDF-отчёт.
 
-Коммиты создаются по мере выполнения этапов. Удалённый адрес пока не предоставлен;
-публикация контрольных версий и доступ преподавателя требуют отдельной настройки.
+Коммиты созданы по мере выполнения этапов. Репозиторий:
+https://github.com/Bahemaal/OSISP . Первые три контрольные версии отправлены вместе
+после получения адреса от пользователя. Доступ преподавателя проверяет студент.
+
+## Запуск готовой программы
+
+Открыть PowerShell в папке LR4:
+
+```powershell
+.\build\LR4_Variant22.exe --mode global --workers 2 --quiet
+.\build\LR4_Variant22.exe --individual --mode stage --workers 4 --quiet
+.\build\LR4_Variant22.exe --operations 12
+.\build\LR4_Variant22.exe --inject-failure 10 --quiet
+.\build\LR4_Variant22.exe --help
+powershell -ExecutionPolicy Bypass -File .\tests\test.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\experiments.ps1
+```
+
+`build/LR4_Variant22.exe` и `libwinpthread-1.dll` нужно сохранять рядом.
+Код 0 означает успех, 1 - ошибку. Отказ рабочего и дедлайн дают ожидаемый код 1.
+В подробном журнале есть состояния и TID всех участников. Метрики после завершения
+выводятся даже при --quiet. Изменяемые параметры: workers, operations, capacity,
+work, stats-work, seed, max-ms, mode. Порядок --individual и --operations учитывается.
+
+## Сборка и воспроизведение графиков
+
+Открыть как CMake-проект в CLion либо выполнить в настроенной среде:
+
+```powershell
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
+python -m pip install reportlab pypdfium2
+python scripts/plot.py
+python scripts/build_report.py
+```
+
+Для Visual Studio EXE будет в build/Release; путь к нему можно передать скриптам
+через -Executable. Скрипты графиков используют Arial и Consolas из Windows Fonts.
+Бинарники не включены в Git; локально они приложены. Из Git программу нужно собрать.
+
+## Материалы и подготовка к сдаче
+
+report/REPORT.pdf и REPORT.md содержат техническую часть отчёта. Два графика доступны
+также в PNG и SVG. Исходные замеры - data/experiments.csv и data/runs/; проверки -
+data/tests/. Исходная схема - diagrams/pipeline.mmd. Код графиков - scripts/plot.py.
+Полный исходный код и скрипт графиков включены в PDF. Исходное задание - data/assignment.txt.
+
+Техническая версия отмечена Git-тегом lab04-v1. Файл report/FINAL_COMMIT.txt содержит
+полный SHA её коммита; он создаётся после коммита и не входит в него. Проверка:
+
+```powershell
+git rev-parse lab04-v1
+git log --oneline --decorate
+```
+
+Перед сдачей необходимо заполнить титульные данные и самостоятельно подготовить
+приложение об использовании ИИ: пункт 10.4 задания запрещает поручать ИИ даже
+оформление этого приложения. В комплекте это приложение отсутствует. Сохраните
+данную переписку для самостоятельного переноса исходных запросов. После дополнения
+отчёта зафиксируйте новую версию, отправьте её и укажите фактический SHA.

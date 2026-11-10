@@ -1,8 +1,8 @@
-[0.0277 ms] PARTICIPANT=0 PID=14092 TID=7700 START GENERATOR VARIANT=22 STUDENT_ID=109 SEED=11573
-WORKER id=1 stage=1 completed=101 stats_wait_ms=0.1063 queue_wait_ms=4.5001 busy_ms=3.7286 processing_ms=3.1655
-WORKER id=2 stage=1 completed=99 stats_wait_ms=0.0456 queue_wait_ms=4.3636 busy_ms=3.722 processing_ms=3.2536
-WORKER id=3 stage=2 completed=102 stats_wait_ms=0.0536 queue_wait_ms=4.5839 busy_ms=3.7508 processing_ms=3.2728
-WORKER id=4 stage=2 completed=98 stats_wait_ms=0.0466 queue_wait_ms=4.5852 busy_ms=3.6552 processing_ms=3.1492
-WORKER id=5 stage=3 completed=112 stats_wait_ms=0.0609 queue_wait_ms=3.9525 busy_ms=4.1731 processing_ms=3.6127
-WORKER id=6 stage=3 completed=88 stats_wait_ms=0.0965 queue_wait_ms=3.8109 busy_ms=3.3643 processing_ms=2.8861
-SUMMARY mode=global workers=2 operations=200 completed=200 rejected=0 seed=11573 capacity=1 work=20000 stats_work=2000 elapsed_ms=9.4608 throughput=21139.9 stats_wait_ms=0.4095 mean_stats_wait_us=0.6825 max_stats_wait_ms=0.0696 stats_hold_ms=2.0105 queue_wait_ms=25.7962 mean_request_ms=0.307848 mean_request_wait_ms=0.190454 processing_ms=19.3399 utilization=0.394505 violations=0 timeouts=0 errors=0 peak0=1 peak1=1 peak2=1 peak3=1
+﻿[0.0658 ms] PARTICIPANT=0 PID=20528 TID=21044 START GENERATOR VARIANT=22 STUDENT_ID=109 SEED=11573
+WORKER id=1 stage=1 completed=100 stats_wait_ms=0.0409 queue_wait_ms=5.5916 busy_ms=3.582 processing_ms=3.1261
+WORKER id=2 stage=1 completed=100 stats_wait_ms=0.0506 queue_wait_ms=5.4111 busy_ms=3.7662 processing_ms=3.1292
+WORKER id=3 stage=2 completed=101 stats_wait_ms=0.2579 queue_wait_ms=5.2685 busy_ms=3.9267 processing_ms=3.2565
+WORKER id=4 stage=2 completed=99 stats_wait_ms=0.1389 queue_wait_ms=5.518 busy_ms=3.623 processing_ms=3.0719
+WORKER id=5 stage=3 completed=154 stats_wait_ms=0.253 queue_wait_ms=3.068 busy_ms=5.9092 processing_ms=4.9264
+WORKER id=6 stage=3 completed=46 stats_wait_ms=0.0271 queue_wait_ms=1.5203 busy_ms=1.636 processing_ms=1.4257
+SUMMARY mode=global workers=2 operations=200 completed=200 rejected=0 seed=11573 capacity=1 work=20000 stats_work=2000 elapsed_ms=10.8734 throughput=18393.5 stats_wait_ms=0.7684 mean_stats_wait_us=1.28067 max_stats_wait_ms=0.1873 stats_hold_ms=2.0298 queue_wait_ms=26.3775 mean_request_ms=0.339117 mean_request_wait_ms=0.221288 processing_ms=18.9358 utilization=0.344006 violations=0 timeouts=0 errors=0 peak0=1 peak1=1 peak2=1 peak3=1
